@@ -1,5 +1,4 @@
 import { LitElement, html, css } from 'lit-element';
-import { openWcLogo } from './open-wc-logo.js';
 
 export class FowlersGarage extends LitElement {
   static get properties() {
@@ -18,7 +17,7 @@ export class FowlersGarage extends LitElement {
         justify-content: flex-start;
         font-size: calc(10px + 2vmin);
         color: #1a2b42;
-        max-width: 960px;
+        max-width: 100vw;
         margin: 0 auto;
         text-align: center;
         background-color: var(--fowlers-garage-background-color);
@@ -61,18 +60,8 @@ export class FowlersGarage extends LitElement {
   render() {
     return html`
       <main>
-        <div class="logo">${openWcLogo}</div>
-        <h1>${this.title}</h1>
-
-        <p>Edit <code>src/FowlersGarage.js</code> and save to reload.</p>
-        <a
-          class="app-link"
-          href="https://open-wc.org/guides/developing-components/code-examples/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Code examples
-        </a>
+        <title-navbar> </title-navbar>
+        <home-page> </home-page>
       </main>
 
       <p class="app-footer">
