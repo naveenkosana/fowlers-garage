@@ -15,7 +15,7 @@ export class FowlersGarage extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        font-size: calc(10px + 2vmin);
+        font-size: calc(10px + 1vmin);
         color: #1a2b42;
         max-width: 100vw;
         margin: 0 auto;
@@ -23,8 +23,9 @@ export class FowlersGarage extends LitElement {
         background-color: var(--fowlers-garage-background-color);
       }
 
-      main {
-        flex-grow: 1;
+      main .title-navbar {
+        border-bottom: 2px solid black;
+        width: 100%;
       }
 
       .logo > svg {
@@ -60,17 +61,21 @@ export class FowlersGarage extends LitElement {
   render() {
     return html`
       <main>
-        <title-navbar> </title-navbar>
-        <home-page> </home-page>
+        <div class="title-navbar">
+          <title-navbar> </title-navbar>
+        </div>
+        <div class="home-body">
+          <home-page> </home-page>
+        </div>
       </main>
 
       <p class="app-footer">
-        🚽 Made with love by
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href="https://github.com/open-wc"
-          >open-wc</a
+          href="https://github.com/naveenkosana"
+        >
+          Naveen Kosana </a
         >.
       </p>
     `;
