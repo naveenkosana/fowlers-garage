@@ -15,7 +15,7 @@ export class FowlersGarage extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        font-size: calc(10px + 1vmin);
+        //font-size: calc(10px + 1vmin);
         color: #1a2b42;
         max-width: 100vw;
         margin: 0 auto;
@@ -68,16 +68,6 @@ export class FowlersGarage extends LitElement {
           <home-page> </home-page>
         </div>
       </main>
-
-      <p class="app-footer">
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/naveenkosana"
-        >
-          Naveen Kosana </a
-        >.
-      </p>
     `;
   }
 }

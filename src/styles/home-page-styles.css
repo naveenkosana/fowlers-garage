@@ -1,9 +1,9 @@
 .car-data-panel {
-    height: 80%;
+    height: 70vh;
     display: flex;
     flex-flow: row wrap;
     justify-content: space-evenly;
-    align-content: space-around;
+    /* align-content: space-evenly; */
 }
 
 .cars-data-container{
@@ -15,7 +15,7 @@
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
     width: 22%;
-    height: 22%;
+    /* height: 28%; */
     cursor: pointer;
     margin-top:1%;
   }
@@ -23,7 +23,21 @@
   .car-data-panel .car-card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   }
+
+  .car-data-panel .car-card .card-container {
+    text-align: left;
+    /* position: relative;
+    left:7%; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    font-size: calc(6px + 1vmin);
+  }
   
-  /* .car-data-panel .card-container {
-    padding: 2px 16px;
-  } */
+  .car-data-panel .car-card .card-container h4, .car-data-panel .car-card .card-container p {
+    margin:3%;
+  }
+
+  .controls-panel{
+    text-align:right
+  }
