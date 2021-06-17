@@ -8,7 +8,7 @@ const app = express();
 
 app.use(cors());
 
-const carsRawData = fs.readFileSync('assets/fowlersCarsStock.json');
+const carsRawData = fs.readFileSync('assets/fowlersCarsStockWithImgs.json');
 const carsData = JSON.parse(carsRawData);
 
 /**

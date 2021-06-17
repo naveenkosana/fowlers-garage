@@ -59,6 +59,7 @@ export class HomePage extends LitElement {
           : event.target.current * this.pageSize
       ),
     ];
+    window.scroll({ top: 0 });
   }
 
   render() {
@@ -73,13 +74,14 @@ export class HomePage extends LitElement {
           ${paginatedCarsData.map(
             car => html`
               <div class="car-card">
-                <img
-                  src="https://via.placeholder.com/250x100?text=Car+Image+Here"
-                  alt="Car"
-                />
+                <img src="${car.img_url}" alt="Car" />
                 <div class="card-container">
-                  <h4><b>${car.make} ${car.model}</b></h4>
-                  <p>€ ${car.price}</p>
+                  <h3><b>${car.make} ${car.model}</b></h3>
+                  <p><b>€ ${car.price}</b></p>
+                </div>
+                <div class="card-container">
+                  <p>Model: ${car.year_model}</p>
+                  <p>${car.licensed ? 'Licensed' : 'Not Licensed'}</p>
                 </div>
               </div>
             `

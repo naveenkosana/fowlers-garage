@@ -8,7 +8,13 @@ export class TitleNavbar extends LitElement {
   }
 
   static get styles() {
-    return css``;
+    return css`
+      .navbar-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+      }
+    `;
   }
 
   constructor() {
@@ -17,6 +23,15 @@ export class TitleNavbar extends LitElement {
   }
 
   render() {
-    return html` <h2>${this.title}</h2> `;
+    return html`
+      <div class="navbar-buttons">
+        <lion-icon
+          icon-id="lion:space:spaceHelmet"
+          aria-label="Fowler Logo"
+        ></lion-icon>
+        <h2>${this.title}</h2>
+        <lion-button>Sign In / Sign Up</lion-button>
+      </div>
+    `;
   }
 }

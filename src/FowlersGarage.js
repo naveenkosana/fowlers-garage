@@ -12,7 +12,7 @@ export class FowlersGarage extends LitElement {
       :host {
         min-height: 100vh;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: flex-start;
         //font-size: calc(10px + 1vmin);

@@ -29,7 +29,9 @@
   "author": "fowlers-garage",
   "license": "MIT",
   "dependencies": {
+    "@lion/button": "^0.14.0",
     "@lion/core": "^0.18.0",
+    "@lion/icon": "^0.13.0",
     "@lion/pagination": "^0.6.0",
     "@open-wc/scoped-elements": "^2.0.0-next.4",
     "lit-element": "^2.5.1",
