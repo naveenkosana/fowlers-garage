@@ -72,18 +72,8 @@ export class HomePage extends LitElement {
         </div>
         <div class="car-data-panel">
           ${paginatedCarsData.map(
-            car => html`
-              <div class="car-card">
-                <img src="${car.img_url}" alt="Car" />
-                <div class="card-container">
-                  <h3><b>${car.make} ${car.model}</b></h3>
-                  <p><b>€ ${car.price}</b></p>
-                </div>
-                <div class="card-container">
-                  <p>Model: ${car.year_model}</p>
-                  <p>${car.licensed ? 'Licensed' : 'Not Licensed'}</p>
-                </div>
-              </div>
+            vehicle => html`
+              <vehicle-card .vehicle=${vehicle}> </vehicle-card>
             `
           )}
         </div>

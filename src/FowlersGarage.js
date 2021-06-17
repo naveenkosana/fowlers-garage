@@ -12,7 +12,7 @@ export class FowlersGarage extends LitElement {
       :host {
         min-height: 100vh;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
         justify-content: flex-start;
         //font-size: calc(10px + 1vmin);
@@ -26,6 +26,13 @@ export class FowlersGarage extends LitElement {
       main .title-navbar {
         border-bottom: 2px solid black;
         width: 100%;
+        position: fixed;
+        height: 7vh;
+      }
+
+      main .home-body {
+        position: relative;
+        top: 7vh;
       }
 
       .logo > svg {
@@ -45,6 +52,8 @@ export class FowlersGarage extends LitElement {
       .app-footer {
         font-size: calc(12px + 0.5vmin);
         align-items: center;
+        position: relative;
+        top: 3vh;
       }
 
       .app-footer a {
@@ -68,6 +77,15 @@ export class FowlersGarage extends LitElement {
           <home-page> </home-page>
         </div>
       </main>
+
+      <p class="app-footer">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/naveenkosana"
+          >Naveen Kosana</a
+        >
+      </p>
     `;
   }
 }

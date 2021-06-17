@@ -13,6 +13,13 @@ export class TitleNavbar extends LitElement {
         display: flex;
         flex-direction: row;
         justify-content: space-around;
+        align-items: center;
+        height: 7vh;
+      }
+
+      .navbar-buttons lion-button {
+        cursor: pointer;
+        height: 100%;
       }
     `;
   }
