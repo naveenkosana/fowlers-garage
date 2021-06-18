@@ -32,10 +32,11 @@ export class TitleNavbar extends LitElement {
   render() {
     return html`
       <div class="navbar-buttons">
-        <lion-icon
+        <!-- <lion-icon
           icon-id="lion:space:spaceHelmet"
           aria-label="Fowler Logo"
-        ></lion-icon>
+        ></lion-icon> -->
+        <span>Logo Here</span>
         <h2>${this.title}</h2>
         <lion-button>Sign In / Sign Up</lion-button>
       </div>

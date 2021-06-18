@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element';
+import { LitElement, html } from 'lit-element';
 
 export class HomePage extends LitElement {
   static get properties() {
@@ -9,10 +9,6 @@ export class HomePage extends LitElement {
       pageCount: { type: Number },
       currentPage: { type: Number },
     };
-  }
-
-  static get styles() {
-    return css``;
   }
 
   constructor() {
@@ -40,6 +36,9 @@ export class HomePage extends LitElement {
       });
   }
 
+  /**
+   * Initial Function that creates the first page of the pagination.
+   */
   paginateCarsList() {
     this.pageCount = Math.ceil(this.onlyCarsData.length / this.pageSize);
     this.paginatedCarsData = this.onlyCarsData.slice(
@@ -50,6 +49,50 @@ export class HomePage extends LitElement {
     );
   }
 
+  /**
+   * EventHandler : Sort by parameter
+   * Sort the vehicles based on the event emitted from Filter Panel Component and re-render the view
+   */
+  _handleSort(event) {
+    const { sortParameter } = event.detail;
+    switch (sortParameter) {
+      case 'dateAscending':
+        this.onlyCarsData.sort((a, b) =>
+          a.date_added.localeCompare(b.date_added)
+        );
+        break;
+      case 'dateDescending':
+        this.onlyCarsData.sort((a, b) =>
+          b.date_added.localeCompare(a.date_added)
+        );
+        break;
+      case 'priceAscending':
+        this.onlyCarsData.sort((a, b) => a.price - b.price);
+        break;
+      case 'priceDescending':
+        this.onlyCarsData.sort((a, b) => b.price - a.price);
+        break;
+      case 'yearModelAscending':
+        this.onlyCarsData.sort((a, b) => a.year_model - b.year_model);
+        break;
+      case 'yearModelDescending':
+        this.onlyCarsData.sort((a, b) => b.year_model - a.year_model);
+        break;
+      default:
+        this.onlyCarsData.sort((a, b) =>
+          a.date_added.localeCompare(b.date_added)
+        );
+        break;
+    }
+
+    this.paginateCarsList(); // to paginate the sorted vehicle list
+    this.shadowRoot.getElementById('home-pagination-component').first(); // to navigate to the first page of vehicle list after sorting
+  }
+
+  /**
+   * EventHandler : Pagination Click
+   * Show vehicles based on the page selected
+   */
   _onPageClick(event) {
     this.paginatedCarsData = [
       ...this.onlyCarsData.slice(
@@ -68,7 +111,11 @@ export class HomePage extends LitElement {
       <link rel="stylesheet" href="./src/styles/home-page-styles.css" />
       <div class="cars-data-container">
         <div class="controls-panel">
-          <p>Sort By: Date Added ascending</p>
+          <filter-panel
+            .carsData=${this.carsData}
+            @sort-event="${e => this._handleSort(e)}"
+          >
+          </filter-panel>
         </div>
         <div class="car-data-panel">
           ${paginatedCarsData.map(

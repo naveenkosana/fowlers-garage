@@ -26,8 +26,11 @@
 }
 
   .controls-panel{
-    text-align:right;
-    height:10vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    position:relative;
+    top:1vh;
   }
   
   .home-pagination-panel {
