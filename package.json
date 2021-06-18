@@ -31,6 +31,7 @@
   "dependencies": {
     "@lion/button": "^0.14.0",
     "@lion/core": "^0.18.0",
+    "@lion/dialog": "^0.13.1",
     "@lion/icon": "^0.13.0",
     "@lion/pagination": "^0.6.0",
     "@lion/select": "^0.14.1",

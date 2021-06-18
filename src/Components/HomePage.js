@@ -4,7 +4,6 @@ export class HomePage extends LitElement {
   static get properties() {
     return {
       carsData: { type: Array },
-      onlyCarsData: { type: Array },
       paginatedCarsData: { type: Array },
       pageCount: { type: Number },
       currentPage: { type: Number },
@@ -14,7 +13,6 @@ export class HomePage extends LitElement {
   constructor() {
     super();
     this.carsData = [];
-    this.onlyCarsData = [];
     this.paginatedCarsData = [];
     this.pageCount = 1;
     this.currentPage = 1;
@@ -26,13 +24,11 @@ export class HomePage extends LitElement {
       .then(res => res.json())
       .then(res => {
         this.carsData = res;
-        res.forEach(warehouse => {
-          this.onlyCarsData.push(...warehouse?.cars?.vehicles);
-          this.onlyCarsData.sort((a, b) =>
-            a.date_added.localeCompare(b.date_added)
-          );
-          this.paginateCarsList();
-        });
+        // res.forEach(warehouse => {
+        //   this.onlyCarsData.push(...warehouse?.cars?.vehicles);
+        // });
+        this.carsData.sort((a, b) => a.date_added.localeCompare(b.date_added));
+        this.paginateCarsList();
       });
   }
 
@@ -40,11 +36,11 @@ export class HomePage extends LitElement {
    * Initial Function that creates the first page of the pagination.
    */
   paginateCarsList() {
-    this.pageCount = Math.ceil(this.onlyCarsData.length / this.pageSize);
-    this.paginatedCarsData = this.onlyCarsData.slice(
+    this.pageCount = Math.ceil(this.carsData.length / this.pageSize);
+    this.paginatedCarsData = this.carsData.slice(
       0,
-      this.onlyCarsData.length < this.pageSize
-        ? this.onlyCarsData.length
+      this.carsData.length < this.pageSize
+        ? this.carsData.length
         : this.pageSize
     );
   }
@@ -57,31 +53,25 @@ export class HomePage extends LitElement {
     const { sortParameter } = event.detail;
     switch (sortParameter) {
       case 'dateAscending':
-        this.onlyCarsData.sort((a, b) =>
-          a.date_added.localeCompare(b.date_added)
-        );
+        this.carsData.sort((a, b) => a.date_added.localeCompare(b.date_added));
         break;
       case 'dateDescending':
-        this.onlyCarsData.sort((a, b) =>
-          b.date_added.localeCompare(a.date_added)
-        );
+        this.carsData.sort((a, b) => b.date_added.localeCompare(a.date_added));
         break;
       case 'priceAscending':
-        this.onlyCarsData.sort((a, b) => a.price - b.price);
+        this.carsData.sort((a, b) => a.price - b.price);
         break;
       case 'priceDescending':
-        this.onlyCarsData.sort((a, b) => b.price - a.price);
+        this.carsData.sort((a, b) => b.price - a.price);
         break;
       case 'yearModelAscending':
-        this.onlyCarsData.sort((a, b) => a.year_model - b.year_model);
+        this.carsData.sort((a, b) => a.year_model - b.year_model);
         break;
       case 'yearModelDescending':
-        this.onlyCarsData.sort((a, b) => b.year_model - a.year_model);
+        this.carsData.sort((a, b) => b.year_model - a.year_model);
         break;
       default:
-        this.onlyCarsData.sort((a, b) =>
-          a.date_added.localeCompare(b.date_added)
-        );
+        this.carsData.sort((a, b) => a.date_added.localeCompare(b.date_added));
         break;
     }
 
@@ -95,10 +85,10 @@ export class HomePage extends LitElement {
    */
   _onPageClick(event) {
     this.paginatedCarsData = [
-      ...this.onlyCarsData.slice(
+      ...this.carsData.slice(
         (event.target.current - 1) * this.pageSize,
-        this.onlyCarsData.length < event.target.current * this.pageSize
-          ? this.onlyCarsData.length
+        this.carsData.length < event.target.current * this.pageSize
+          ? this.carsData.length
           : event.target.current * this.pageSize
       ),
     ];
