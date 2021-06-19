@@ -126,3 +126,6 @@ dist
 /out-tsc/
 
 storybook-static
+
+#api_key
+assets/GOOGLE_API_KEY.js
