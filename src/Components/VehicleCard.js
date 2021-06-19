@@ -34,17 +34,35 @@ export class VehicleCard extends LitElement {
 
   render() {
     return html`
-      <div class="car-card">
-        <img src="${this.vehicle.img_url}" alt="Car" />
-        <div class="card-container">
-          <h3><b>${this.vehicle.make} ${this.vehicle.model}</b></h3>
-          <p><b>€ ${this.vehicle.price}</b></p>
-        </div>
-        <div class="card-container">
-          <p>Model: ${this.vehicle.year_model}</p>
-          <p>${this.vehicle.licensed ? 'Licensed' : 'Not Licensed'}</p>
-        </div>
-      </div>
+      ${this.vehicle.licensed
+        ? html`<lion-dialog .config="$">
+            <div class="car-card" slot="invoker">
+              <img src="${this.vehicle.img_url}" alt="Car" />
+              <div class="card-container">
+                <h3><b>${this.vehicle.make} ${this.vehicle.model}</b></h3>
+                <p><b>€ ${this.vehicle.price}</b></p>
+              </div>
+              <div class="card-container">
+                <p>Model: ${this.vehicle.year_model}</p>
+                <p style="color: Green">Available</p>
+              </div>
+            </div>
+            <vehicle-detail
+              slot="content"
+              .vehicle=${this.vehicle}
+            ></vehicle-detail>
+          </lion-dialog>`
+        : html`<div class="car-card" style="opacity:0.5; cursor:default">
+            <img src="${this.vehicle.img_url}" alt="Car" />
+            <div class="card-container">
+              <h3><b>${this.vehicle.make} ${this.vehicle.model}</b></h3>
+              <p><b>€ ${this.vehicle.price}</b></p>
+            </div>
+            <div class="card-container">
+              <p>Model: ${this.vehicle.year_model}</p>
+              <p style="color: Red">Not Available</p>
+            </div>
+          </div> `}
     `;
   }
 }
