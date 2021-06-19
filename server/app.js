@@ -52,7 +52,6 @@ app.get('/getCarsDataFromWarehouse/:id', (req, res) => {
  * @param {Number} Car Id
  */
 app.get('/getSlots/:id', (req, res) => {
-  console.log(req.params.id);
   res.json(
     testDriveSlotsData.find(car => car.car_id === parseInt(req.params.id, 10))
   );
@@ -84,7 +83,10 @@ app.post('/createSlot', jsonParser, (req, res) => {
     status: 'booked',
   };
 
-  // eslint-disable-next-line no-unused-vars
+  // const newDate = new Date(newSlotFromClient.time);
+
+  // // newDate = newDate.toLocaleDateString('en-CA')
+  // // // eslint-disable-next-line no-unused-vars
   const dateKey = _formatDate(new Date(newSlotFromClient.time));
 
   testDriveSlotsData

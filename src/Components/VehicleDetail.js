@@ -1,5 +1,7 @@
 import { LitElement, html, css } from 'lit-element';
 // import apiKey from '../../assets/GOOGLE_API_KEY.js';   // Uncomment for implementing Google Maps API using api_key
+import { formatDate } from '@lion/localize';
+import { MinMaxDate } from '@lion/form-core';
 
 export class VehicleDetail extends LitElement {
   static get properties() {
@@ -153,9 +155,24 @@ export class VehicleDetail extends LitElement {
                 <span>Added on ${this.vehicle.date_added}</span>
               </div>
             </div>
-            <div
-              class="vehicle-detail-testdrive vehicle-detail-right-half"
-            ></div>
+            <div class="vehicle-detail-testdrive vehicle-detail-right-half">
+              <h3>Book Slot for Test Drive:</h3>
+              <lion-input-datepicker
+                label="TestDriveDate"
+                .modelValue=${new Date()}
+                .validators=${[
+                  new MinMaxDate({
+                    min: new Date(),
+                    max: new Date('2021/06/24'),
+                  }),
+                ]}
+              >
+                <div slot="help-text">
+                  Enter a date between ${formatDate(new Date())} and
+                  ${formatDate(new Date('2021/06/24'))}.
+                </div></lion-input-datepicker
+              >
+            </div>
           </div>
         </div>
         <!-- <div class="vehicle-detail-dialog-footer"></div> -->
