@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit-element';
-// import apiKey from '../../assets/GOOGLE_API_KEY.js';
+// import apiKey from '../../assets/GOOGLE_API_KEY.js';   // Uncomment for implementing Google Maps API using api_key
 
 export class VehicleDetail extends LitElement {
   static get properties() {
@@ -10,29 +10,13 @@ export class VehicleDetail extends LitElement {
     };
   }
 
-  firstUpdated() {
-    // Uncomment for implementing Google Maps API using api_key
-    // this.google_api_key = apiKey.api_key;
-    // this.location_url = `https://www.google.com/maps/embed/v1/place?q=${this.vehicle.warehouse_location.lat},+${this.vehicle.warehouse_location.long}&zoom=7&key=${this.google_api_key}`;
-    // console.log(this.vehicle.warehouse_id);
-    // switch(this.vehicle.warehouse_id) {
-    //     case 1:
-    //         this.location_url = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d491161.6201323394!2d-61.880472020605644!3d47.1517722669922!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDfCsDA3JzUyLjAiTiA2McKwMzInNTIuOCJX!5e0!3m2!1sen!2shu!4v1624124437034!5m2!1sen!2shu";
-    //         break;
-    //     case 2:
-    //         this.location_url = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048504.815062617!2d5.920694892489735!3d16.117896928131966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTXCsDU3JzEzLjkiTiA3wrAwMyc0NC45IkU!5e0!3m2!1sen!2shu!4v1624124530615!5m2!1sen!2shu";
-    //         break;
-    //     case 3:
-    //         this.location_url = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d282201.5197642751!2d-2.917322328164766!3d39.118193566948946!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMznCsDA3JzQwLjQiTiAywrA0Mic1MC4zIlc!5e0!3m2!1sen!2shu!4v1624117953060!5m2!1sen!2shu";
-    //         break;
-    //     case 4:
-    //         this.location_url = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20168100.929967623!2d96.47684861257753!3d-72.02956954141905!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNzDCsDUwJzM2LjciUyAxMzLCsDEzJzI0LjQiRQ!5e0!3m2!1sen!2shu!4v1624124604396!5m2!1sen!2shu";
-    //         break;
-    //     default:
-    //         this.location_url = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d491161.6201323394!2d-61.880472020605644!3d47.1517722669922!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDfCsDA3JzUyLjAiTiA2McKwMzInNTIuOCJX!5e0!3m2!1sen!2shu!4v1624124437034!5m2!1sen!2shu";
-    //         break;
-    // }
-  }
+  // Uncomment for implementing Google Maps API using api_key
+  //   firstUpdated() {
+
+  //     this.google_api_key = apiKey.api_key;
+  //     this.location_url = `https://www.google.com/maps/embed/v1/place?q=${this.vehicle.warehouse_location.lat},+${this.vehicle.warehouse_location.long}&zoom=7&key=${this.google_api_key}`;
+
+  //   }
 
   static get styles() {
     return css`
