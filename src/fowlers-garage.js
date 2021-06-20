@@ -4,6 +4,7 @@ import { LionIcon } from '@lion/icon';
 import { LionSelectRich, LionOption } from '@lion/select-rich';
 import { LionDialog } from '@lion/dialog';
 import { LionInputDatepicker } from '@lion/input-datepicker';
+import { LionSelect } from '@lion/select';
 
 import { FowlersGarage } from './FowlersGarage.js';
 import { TitleNavbar } from './Components/TitleNavbar.js';
@@ -18,6 +19,7 @@ customElements.define('home-page', HomePage);
 customElements.define('lion-pagination', LionPagination);
 customElements.define('lion-button', LionButton);
 customElements.define('lion-icon', LionIcon);
+customElements.define('lion-select', LionSelect);
 customElements.define('lion-select-rich', LionSelectRich);
 customElements.define('lion-option', LionOption);
 customElements.define('vehicle-card', VehicleCard);

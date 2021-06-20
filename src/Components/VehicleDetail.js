@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit-element';
 // import apiKey from '../../assets/GOOGLE_API_KEY.js';   // Uncomment for implementing Google Maps API using api_key
-import { formatDate } from '@lion/localize';
+// import { formatDate } from '@lion/localize';
 import { MinMaxDate } from '@lion/form-core';
 
 export class VehicleDetail extends LitElement {
@@ -9,6 +9,9 @@ export class VehicleDetail extends LitElement {
       vehicle: { type: Object },
       location_url: { type: String },
       google_api_key: { type: String },
+      timeSlots: { type: Array },
+      selectedDate: { type: Date },
+      selectedTime: { type: String },
     };
   }
 
@@ -19,6 +22,31 @@ export class VehicleDetail extends LitElement {
   //     this.location_url = `https://www.google.com/maps/embed/v1/place?q=${this.vehicle.warehouse_location.lat},+${this.vehicle.warehouse_location.long}&zoom=7&key=${this.google_api_key}`;
 
   //   }
+
+  constructor() {
+    super();
+    this.selectedDate = new Date().toLocaleDateString('en-CA');
+    this.timeSlots = [
+      '0800',
+      '0830',
+      '0900',
+      '0930',
+      '1000',
+      '1030',
+      '1100',
+      '1130',
+      '1200',
+      '1230',
+      '1300',
+      '1330',
+      '1400',
+      '1430',
+      '1500',
+      '1530',
+      '1600',
+      '1630',
+    ];
+  }
 
   static get styles() {
     return css`
@@ -55,10 +83,7 @@ export class VehicleDetail extends LitElement {
         outline: 1px solid rgba(0, 0, 0, 0.2);
       }
 
-      .vehicle-detail-dialog-body
-        .vehicle-detail-left
-        .vehicle-map-location
-        iframe {
+      .vehicle-detail-dialog-body .vehicle-map-location iframe {
         height: 80%;
         width: 80%;
         outline: 1px solid rgba(0, 0, 0, 0.2);
@@ -90,6 +115,11 @@ export class VehicleDetail extends LitElement {
         height: 4vh;
         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
       }
+
+      #testdrive-date-picker,
+      #time-selection-dropdown {
+        width: 60%;
+      }
     `;
   }
 
@@ -112,12 +142,49 @@ export class VehicleDetail extends LitElement {
     }
   }
 
+  _dateChanged(e) {
+    console.log(e.target.modelValue);
+    this.selectedDate = e.target.modelValue.toLocaleDateString('en-CA');
+  }
+
+  _bookTimeSlot() {
+    // this.shadowRoot.getElementById('time-slot-select').modelValue;
+    //   console.log(`${this.selectedDate  } ${  this.shadowRoot.getElementById('time-slot-lion-select').modelValue}`);
+    // let selectedTime =  this.shadowRoot.getElementById('time-slot-lion-select').modelValue;
+    const newSlot = {
+      dateTime: `${this.selectedDate} ${
+        this.shadowRoot.getElementById('time-slot-lion-select').modelValue
+      }`,
+      car_id: this.vehicle._id,
+    };
+
+    fetch('http://localhost:5000/createSlot', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newSlot),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
   _closeDialog() {
+    this.selectedDate = new Date().toLocaleDateString('en-CA');
+    this.shadowRoot.getElementById('time-slot-select').selectedIndex = 0;
     const event = new Event('close-overlay', { bubbles: true });
     this.dispatchEvent(event);
   }
 
   render() {
+    const placementRightConfig = { popperConfig: { placement: 'right' } };
+    const today = new Date();
+    const maxDate = new Date(today.setDate(today.getDate() + 30));
     return html`
       <div class="vehicle-detail-dialog">
         <div class="vehicle-detail-dialog-header">
@@ -128,20 +195,7 @@ export class VehicleDetail extends LitElement {
             <div class="vehicle-image-container vehicle-detail-left-half">
               <img src="${this.vehicle.img_url}" alt="Car" />
             </div>
-            <div class="vehicle-map-location vehicle-detail-left-half">
-              <iframe
-                width="100%"
-                height="100%"
-                title="vehicle-location"
-                style="border:0"
-                loading="lazy"
-                allowfullscreen
-                src=${this._getLocationUrl()}
-              ></iframe>
-            </div>
-          </div>
-          <div class="vehicle-detail-right vehicle-detail-half">
-            <div class="vehicle-details vehicle-detail-right-half">
+            <div class="vehicle-details vehicle-detail-left-half">
               <h3>General Details</h3>
               <div class="vehicle-general-details">
                 <span><b> ${this.vehicle.make} ${this.vehicle.model}</b></span>
@@ -155,23 +209,60 @@ export class VehicleDetail extends LitElement {
                 <span>Added on ${this.vehicle.date_added}</span>
               </div>
             </div>
+          </div>
+          <div class="vehicle-detail-right vehicle-detail-half">
             <div class="vehicle-detail-testdrive vehicle-detail-right-half">
-              <h3>Book Slot for Test Drive:</h3>
+              <h3>Book a Slot for Test Drive</h3>
               <lion-input-datepicker
-                label="TestDriveDate"
+                id="testdrive-date-picker"
+                label="Test Drive Date"
+                help-text="You can book an appointment for the next 30days."
+                .config=${placementRightConfig}
                 .modelValue=${new Date()}
+                @model-value-changed=${this._dateChanged}
                 .validators=${[
                   new MinMaxDate({
                     min: new Date(),
-                    max: new Date('2021/06/24'),
+                    max: maxDate,
                   }),
                 ]}
               >
-                <div slot="help-text">
-                  Enter a date between ${formatDate(new Date())} and
-                  ${formatDate(new Date('2021/06/24'))}.
-                </div></lion-input-datepicker
-              >
+              </lion-input-datepicker>
+              <div id="time-selection-dropdown">
+                <h4>Select an available time:</h4>
+                <lion-select id="time-slot-lion-select" name="book-time-slot">
+                  <select id="time-slot-select" slot="input">
+                    <option selected hidden value>Please select</option>
+                    ${this.timeSlots.map(
+                      timeSlot => html`
+                        <option
+                          value=${`${timeSlot.substring(
+                            0,
+                            2
+                          )}:${timeSlot.substring(2, 4)}`}
+                        >
+                          ${`${timeSlot.substring(0, 2)}:${timeSlot.substring(
+                            2,
+                            4
+                          )}`}
+                        </option>
+                      `
+                    )}
+                  </select>
+                </lion-select>
+                <lion-button @click=${this._bookTimeSlot}>Book</lion-button>
+              </div>
+            </div>
+            <div class="vehicle-map-location vehicle-detail-right-half">
+              <iframe
+                width="100%"
+                height="100%"
+                title="vehicle-location"
+                style="border:0"
+                loading="lazy"
+                allowfullscreen
+                src=${this._getLocationUrl()}
+              ></iframe>
             </div>
           </div>
         </div>

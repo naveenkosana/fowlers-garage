@@ -57,16 +57,16 @@ app.get('/getSlots/:id', (req, res) => {
   );
 });
 
-const _formatDate = d => {
-  let month = (d.getMonth() + 1).toString();
-  let day = d.getDate().toString();
-  const year = d.getFullYear().toString();
+// const _formatDate = d => {
+//   let month = (d.getMonth() + 1).toString();
+//   let day = d.getDate().toString();
+//   const year = d.getFullYear().toString();
 
-  month = month.length < 2 ? `0${month}` : month;
-  day = day.length < 2 ? `0${day}` : day;
+//   month = month.length < 2 ? `0${month}` : month;
+//   day = day.length < 2 ? `0${day}` : day;
 
-  return [year, month, day].join('-');
-};
+//   return [year, month, day].join('-');
+// };
 
 /**
  * Add Test Drive slot information for a specific car
@@ -79,19 +79,21 @@ app.post('/createSlot', jsonParser, (req, res) => {
   const newSlotFromClient = req.body;
 
   const newSlot = {
-    time: newSlotFromClient.time,
+    time: newSlotFromClient.dateTime,
     status: 'booked',
   };
 
-  // const newDate = new Date(newSlotFromClient.time);
+  console.log(newSlot);
 
-  // // newDate = newDate.toLocaleDateString('en-CA')
+  let newDate = new Date(newSlot.time);
+  console.log(newDate);
+  newDate = newDate.toLocaleDateString('en-CA');
   // // // eslint-disable-next-line no-unused-vars
-  const dateKey = _formatDate(new Date(newSlotFromClient.time));
-
+  // const dateKey = _formatDate(new Date(newSlotFromClient.time));
+  console.log(newDate);
   testDriveSlotsData
     .find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10))
-    .booked_slots[dateKey].slots.push(newSlot);
+    .booked_slots[newDate].slots.push(newSlot);
 
   const rawJson = JSON.stringify(testDriveSlotsData);
 
