@@ -16,9 +16,9 @@ const carsRawData = fs.readFileSync('assets/fowlersCarsStockWithImgs.json');
 const carsData = JSON.parse(carsRawData);
 const onlyCarsData = [];
 
-const testDriveSlotsFileUrl = 'assets/testDriveAppointments.json';
-const testDriveSlots = fs.readFileSync(testDriveSlotsFileUrl);
-const testDriveSlotsData = JSON.parse(testDriveSlots);
+// const testDriveSlotsFileUrl = 'assets/testDriveAppointments.json';
+// const testDriveSlots = fs.readFileSync(testDriveSlotsFileUrl);
+// const testDriveSlotsData = JSON.parse(testDriveSlots);
 
 /* Include Warehouse details for every car object available */
 carsData.forEach(warehouse => {
@@ -52,6 +52,10 @@ app.get('/getCarsDataFromWarehouse/:id', (req, res) => {
  * @param {Number} Car Id
  */
 app.get('/getSlots/:id', (req, res) => {
+  const testDriveSlotsFileUrl = 'assets/testDriveAppointments.json';
+  const testDriveSlots = fs.readFileSync(testDriveSlotsFileUrl);
+  const testDriveSlotsData = JSON.parse(testDriveSlots);
+
   res.json(
     testDriveSlotsData.find(car => car.car_id === parseInt(req.params.id, 10))
   );
@@ -76,6 +80,10 @@ app.post('/createSlot', jsonParser, (req, res) => {
     return res.sendStatus(400);
   }
 
+  const testDriveSlotsFileUrl = 'assets/testDriveAppointments.json';
+  const testDriveSlots = fs.readFileSync(testDriveSlotsFileUrl);
+  const testDriveSlotsData = JSON.parse(testDriveSlots);
+  console.log(JSON.stringify(testDriveSlotsData));
   const newSlotFromClient = req.body;
 
   const newSlot = {
@@ -83,17 +91,45 @@ app.post('/createSlot', jsonParser, (req, res) => {
     status: 'booked',
   };
 
-  console.log(newSlot);
-
   let newDate = new Date(newSlot.time);
-  console.log(newDate);
   newDate = newDate.toLocaleDateString('en-CA');
+
+  const carIndex = testDriveSlotsData.findIndex(
+    car => car.car_id === parseInt(newSlotFromClient.car_id, 10)
+  );
+
+  if (carIndex === -1) {
+    // add car and booked slot detail
+    testDriveSlotsData.push({
+      car_id: parseInt(newSlotFromClient.car_id, 10),
+      [newDate]: [newSlot],
+    });
+  } else {
+    console.log(`${carIndex} ${newDate}`);
+    // add new slot details to existing car object
+    if (testDriveSlotsData[carIndex][newDate] === undefined) {
+      console.log('undefined');
+      testDriveSlotsData[carIndex][newDate] = [];
+    }
+
+    testDriveSlotsData[carIndex][newDate].push(newSlot);
+  }
+  // testDriveSlotsData.find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10))[newDate] = Array.from(...newSlot);
+  // else{
+  //   if(testDriveSlotsData.find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10)).booked_slots[newDate] == -1){
+  //     // add slot details
+  //   }
+  //   else {
+  //   testDriveSlotsData
+  //   .find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10))
+  //   .booked_slots[newDate].slots.push(newSlot);
+  //   }
+  // }
   // // // eslint-disable-next-line no-unused-vars
   // const dateKey = _formatDate(new Date(newSlotFromClient.time));
-  console.log(newDate);
-  testDriveSlotsData
-    .find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10))
-    .booked_slots[newDate].slots.push(newSlot);
+  // testDriveSlotsData
+  //   .find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10))
+  //   .booked_slots[newDate].slots.push(newSlot);
 
   const rawJson = JSON.stringify(testDriveSlotsData);
 

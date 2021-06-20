@@ -117,7 +117,18 @@ export class VehicleDetail extends LitElement {
       }
 
       #testdrive-date-picker,
-      #time-selection-dropdown {
+      #time-selection-dropdown-container {
+        width: 60%;
+      }
+
+      #time-selection-dropdown-container #time-selection-dropdown {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      #time-selection-dropdown-container #time-selection-dropdown lion-select {
         width: 60%;
       }
     `;
@@ -144,38 +155,48 @@ export class VehicleDetail extends LitElement {
 
   _dateChanged(e) {
     console.log(e.target.modelValue);
-    this.selectedDate = e.target.modelValue.toLocaleDateString('en-CA');
+    this.selectedDate = new Date(e.target.modelValue);
+    this.selectedDate = this.selectedDate.toLocaleDateString('en-CA');
   }
 
   _bookTimeSlot() {
-    // this.shadowRoot.getElementById('time-slot-select').modelValue;
-    //   console.log(`${this.selectedDate  } ${  this.shadowRoot.getElementById('time-slot-lion-select').modelValue}`);
-    // let selectedTime =  this.shadowRoot.getElementById('time-slot-lion-select').modelValue;
-    const newSlot = {
-      dateTime: `${this.selectedDate} ${
-        this.shadowRoot.getElementById('time-slot-lion-select').modelValue
-      }`,
-      car_id: this.vehicle._id,
-    };
+    if (
+      this.shadowRoot.getElementById('testdrive-date-picker').modelValue ===
+        '' ||
+      this.shadowRoot.getElementById('time-slot-lion-select').modelValue === ''
+    ) {
+      alert('Please select both the Date and Time and click on Book');
+    } else {
+      const newSlot = {
+        dateTime: `${this.selectedDate} ${
+          this.shadowRoot.getElementById('time-slot-lion-select').modelValue
+        }`,
+        car_id: this.vehicle._id,
+      };
 
-    fetch('http://localhost:5000/createSlot', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newSlot),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
+      fetch('http://localhost:5000/createSlot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newSlot),
       })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          alert('Slot Booked Successfully');
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert(
+            "We're currently experiencing some issues. Please try again later"
+          );
+        });
+    }
   }
 
   _closeDialog() {
-    this.selectedDate = new Date().toLocaleDateString('en-CA');
+    // this.selectedDate = new Date().toLocaleDateString('en-CA');
     this.shadowRoot.getElementById('time-slot-select').selectedIndex = 0;
     const event = new Event('close-overlay', { bubbles: true });
     this.dispatchEvent(event);
@@ -218,8 +239,7 @@ export class VehicleDetail extends LitElement {
                 label="Test Drive Date"
                 help-text="You can book an appointment for the next 30days."
                 .config=${placementRightConfig}
-                .modelValue=${new Date()}
-                @model-value-changed=${this._dateChanged}
+                @model-value-changed=${e => this._dateChanged(e)}
                 .validators=${[
                   new MinMaxDate({
                     min: new Date(),
@@ -228,29 +248,31 @@ export class VehicleDetail extends LitElement {
                 ]}
               >
               </lion-input-datepicker>
-              <div id="time-selection-dropdown">
+              <div id="time-selection-dropdown-container">
                 <h4>Select an available time:</h4>
-                <lion-select id="time-slot-lion-select" name="book-time-slot">
-                  <select id="time-slot-select" slot="input">
-                    <option selected hidden value>Please select</option>
-                    ${this.timeSlots.map(
-                      timeSlot => html`
-                        <option
-                          value=${`${timeSlot.substring(
-                            0,
-                            2
-                          )}:${timeSlot.substring(2, 4)}`}
-                        >
-                          ${`${timeSlot.substring(0, 2)}:${timeSlot.substring(
-                            2,
-                            4
-                          )}`}
-                        </option>
-                      `
-                    )}
-                  </select>
-                </lion-select>
-                <lion-button @click=${this._bookTimeSlot}>Book</lion-button>
+                <div id="time-selection-dropdown">
+                  <lion-select id="time-slot-lion-select" name="book-time-slot">
+                    <select id="time-slot-select" slot="input">
+                      <option selected hidden value>Please select</option>
+                      ${this.timeSlots.map(
+                        timeSlot => html`
+                          <option
+                            value=${`${timeSlot.substring(
+                              0,
+                              2
+                            )}:${timeSlot.substring(2, 4)}`}
+                          >
+                            ${`${timeSlot.substring(0, 2)}:${timeSlot.substring(
+                              2,
+                              4
+                            )}`}
+                          </option>
+                        `
+                      )}
+                    </select>
+                  </lion-select>
+                  <lion-button @click=${this._bookTimeSlot}>Book</lion-button>
+                </div>
               </div>
             </div>
             <div class="vehicle-map-location vehicle-detail-right-half">
