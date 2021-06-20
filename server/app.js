@@ -12,13 +12,14 @@ const jsonParser = bodyParser.json();
 
 app.use(cors());
 
+const userDataFile = fs.readFileSync('assets/user.json');
+const userData = JSON.parse(userDataFile);
+
 const carsRawData = fs.readFileSync('assets/fowlersCarsStockWithImgs.json');
 const carsData = JSON.parse(carsRawData);
 const onlyCarsData = [];
 
-// const testDriveSlotsFileUrl = 'assets/testDriveAppointments.json';
-// const testDriveSlots = fs.readFileSync(testDriveSlotsFileUrl);
-// const testDriveSlotsData = JSON.parse(testDriveSlots);
+const testDriveSlotsFileUrl = 'assets/testDriveAppointments.json';
 
 /* Include Warehouse details for every car object available */
 carsData.forEach(warehouse => {
@@ -30,6 +31,34 @@ carsData.forEach(warehouse => {
     cars_location: warehouse.cars.location,
   }));
   onlyCarsData.push(...carsWithWarehouseDetails);
+});
+
+/**
+ * Check If Valid User.
+ */
+app.post('/authenticateUser', jsonParser, (req, res) => {
+  if (!req.body) {
+    return res.sendStatus(400);
+  }
+
+  const { username, password } = req.body;
+
+  const userIndex = userData.findIndex(user => user.username === username);
+
+  if (userIndex === -1) {
+    return res.json('User Not Found');
+  }
+
+  if (userData[userIndex].password !== password) {
+    return res.json('false');
+  }
+
+  const userObj = {
+    userId: userData[userIndex]._id,
+    username: userData[userIndex].username,
+  };
+
+  return res.json(userObj);
 });
 
 /**
@@ -52,7 +81,6 @@ app.get('/getCarsDataFromWarehouse/:id', (req, res) => {
  * @param {Number} Car Id
  */
 app.get('/getSlots/:id', (req, res) => {
-  const testDriveSlotsFileUrl = 'assets/testDriveAppointments.json';
   const testDriveSlots = fs.readFileSync(testDriveSlotsFileUrl);
   const testDriveSlotsData = JSON.parse(testDriveSlots);
 
@@ -60,17 +88,6 @@ app.get('/getSlots/:id', (req, res) => {
     testDriveSlotsData.find(car => car.car_id === parseInt(req.params.id, 10))
   );
 });
-
-// const _formatDate = d => {
-//   let month = (d.getMonth() + 1).toString();
-//   let day = d.getDate().toString();
-//   const year = d.getFullYear().toString();
-
-//   month = month.length < 2 ? `0${month}` : month;
-//   day = day.length < 2 ? `0${day}` : day;
-
-//   return [year, month, day].join('-');
-// };
 
 /**
  * Add Test Drive slot information for a specific car
@@ -80,13 +97,13 @@ app.post('/createSlot', jsonParser, (req, res) => {
     return res.sendStatus(400);
   }
 
-  const testDriveSlotsFileUrl = 'assets/testDriveAppointments.json';
   const testDriveSlots = fs.readFileSync(testDriveSlotsFileUrl);
   const testDriveSlotsData = JSON.parse(testDriveSlots);
-  console.log(JSON.stringify(testDriveSlotsData));
   const newSlotFromClient = req.body;
 
   const newSlot = {
+    user_id: newSlotFromClient.user_id,
+    time_text: newSlotFromClient.time_text,
     time: newSlotFromClient.dateTime,
     status: 'booked',
   };
@@ -105,31 +122,13 @@ app.post('/createSlot', jsonParser, (req, res) => {
       [newDate]: [newSlot],
     });
   } else {
-    console.log(`${carIndex} ${newDate}`);
     // add new slot details to existing car object
     if (testDriveSlotsData[carIndex][newDate] === undefined) {
-      console.log('undefined');
       testDriveSlotsData[carIndex][newDate] = [];
     }
 
     testDriveSlotsData[carIndex][newDate].push(newSlot);
   }
-  // testDriveSlotsData.find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10))[newDate] = Array.from(...newSlot);
-  // else{
-  //   if(testDriveSlotsData.find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10)).booked_slots[newDate] == -1){
-  //     // add slot details
-  //   }
-  //   else {
-  //   testDriveSlotsData
-  //   .find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10))
-  //   .booked_slots[newDate].slots.push(newSlot);
-  //   }
-  // }
-  // // // eslint-disable-next-line no-unused-vars
-  // const dateKey = _formatDate(new Date(newSlotFromClient.time));
-  // testDriveSlotsData
-  //   .find(car => car.car_id === parseInt(newSlotFromClient.car_id, 10))
-  //   .booked_slots[newDate].slots.push(newSlot);
 
   const rawJson = JSON.stringify(testDriveSlotsData);
 

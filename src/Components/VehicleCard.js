@@ -4,6 +4,7 @@ export class VehicleCard extends LitElement {
   static get properties() {
     return {
       vehicle: { type: Object },
+      userObj: { type: Object },
     };
   }
 
@@ -49,6 +50,7 @@ export class VehicleCard extends LitElement {
             </div>
             <vehicle-detail
               slot="content"
+              .userObj=${this.userObj}
               .vehicle=${this.vehicle}
             ></vehicle-detail>
           </lion-dialog>`

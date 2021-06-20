@@ -4,6 +4,7 @@ export class FowlersGarage extends LitElement {
   static get properties() {
     return {
       title: { type: String },
+      showHomePage: { type: Boolean },
     };
   }
 
@@ -65,19 +66,40 @@ export class FowlersGarage extends LitElement {
   constructor() {
     super();
     this.title = 'My app';
+    this.showHomePage = false;
+  }
+
+  _handleHomePageView(e) {
+    console.log('here');
+    this.showHomePage = e.detail.showHomePage;
+    this.userObj = e.detail.userObj;
   }
 
   render() {
-    return html`
-      <main>
-        <div class="title-navbar">
-          <title-navbar> </title-navbar>
-        </div>
-        <div class="home-body">
-          <home-page> </home-page>
-        </div>
-      </main>
+    if (this.showHomePage) {
+      return html`
+        <main>
+          <div class="title-navbar">
+            <title-navbar .userObj=${this.userObj}> </title-navbar>
+          </div>
+          <div class="home-body">
+            <home-page .userObj=${this.userObj}> </home-page>
+          </div>
+        </main>
 
+        <p class="app-footer">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/naveenkosana"
+            >Naveen Kosana</a
+          >
+        </p>
+      `;
+    }
+
+    return html`
+      <login-page @login-success="${this._handleHomePageView}"></login-page>
       <p class="app-footer">
         <a
           target="_blank"

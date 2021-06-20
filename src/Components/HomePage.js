@@ -1,4 +1,5 @@
 import { LitElement, html } from 'lit-element';
+import { repeat } from 'lit-html/directives/repeat';
 
 export class HomePage extends LitElement {
   static get properties() {
@@ -7,6 +8,7 @@ export class HomePage extends LitElement {
       paginatedCarsData: { type: Array },
       pageCount: { type: Number },
       currentPage: { type: Number },
+      userObj: { type: Object },
     };
   }
 
@@ -24,9 +26,6 @@ export class HomePage extends LitElement {
       .then(res => res.json())
       .then(res => {
         this.carsData = res;
-        // res.forEach(warehouse => {
-        //   this.onlyCarsData.push(...warehouse?.cars?.vehicles);
-        // });
         this.carsData.sort((a, b) => a.date_added.localeCompare(b.date_added));
         this.paginateCarsList();
       });
@@ -108,10 +107,14 @@ export class HomePage extends LitElement {
           </filter-panel>
         </div>
         <div class="car-data-panel">
-          ${paginatedCarsData.map(
-            vehicle => html`
-              <vehicle-card .vehicle=${vehicle}> </vehicle-card>
-            `
+          ${repeat(
+            paginatedCarsData,
+            vehicle => vehicle._id,
+            vehicle =>
+              html`
+                <vehicle-card .userObj=${this.userObj} .vehicle=${vehicle}>
+                </vehicle-card>
+              `
           )}
         </div>
         <div class="home-pagination-panel">

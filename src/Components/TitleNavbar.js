@@ -4,6 +4,7 @@ export class TitleNavbar extends LitElement {
   static get properties() {
     return {
       title: { type: String },
+      userObj: { type: Object },
     };
   }
 
@@ -21,6 +22,13 @@ export class TitleNavbar extends LitElement {
         cursor: pointer;
         height: 100%;
       }
+
+      #welcome-btn {
+        width: 14vw;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+      }
     `;
   }
 
@@ -32,13 +40,11 @@ export class TitleNavbar extends LitElement {
   render() {
     return html`
       <div class="navbar-buttons">
-        <!-- <lion-icon
-          icon-id="lion:space:spaceHelmet"
-          aria-label="Fowler Logo"
-        ></lion-icon> -->
-        <span>Logo Here</span>
-        <h2>${this.title}</h2>
-        <lion-button>Sign In / Sign Up</lion-button>
+        <h1>${this.title}</h1>
+        <span id="welcome-btn">
+          <p>Welcome ${this.userObj.username}</p>
+          <lion-button>Sign Out</lion-button>
+        </span>
       </div>
     `;
   }

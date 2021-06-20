@@ -1,8 +1,9 @@
 import { LionPagination } from '@lion/pagination';
-import { LionButton } from '@lion/button';
+import { LionButton, LionButtonSubmit } from '@lion/button';
 import { LionIcon } from '@lion/icon';
 import { LionSelectRich, LionOption } from '@lion/select-rich';
 import { LionDialog } from '@lion/dialog';
+import { LionInput } from '@lion/input';
 import { LionInputDatepicker } from '@lion/input-datepicker';
 import { LionSelect } from '@lion/select';
 
@@ -10,10 +11,12 @@ import { FowlersGarage } from './FowlersGarage.js';
 import { TitleNavbar } from './Components/TitleNavbar.js';
 import { HomePage } from './Components/HomePage.js';
 import { VehicleCard } from './Components/VehicleCard.js';
-import { FilterPanel } from './Components/FilterPanel.js';
+import { FilterPanel } from './Components/filterPanel.js';
 import { VehicleDetail } from './Components/VehicleDetail.js';
+import { LoginPage } from './Components/LoginPage.js';
 
 customElements.define('fowlers-garage', FowlersGarage);
+customElements.define('login-page', LoginPage);
 customElements.define('title-navbar', TitleNavbar);
 customElements.define('home-page', HomePage);
 customElements.define('lion-pagination', LionPagination);
@@ -26,4 +29,6 @@ customElements.define('vehicle-card', VehicleCard);
 customElements.define('filter-panel', FilterPanel);
 customElements.define('vehicle-detail', VehicleDetail);
 customElements.define('lion-dialog', LionDialog);
+customElements.define('lion-input', LionInput);
+customElements.define('lion-button-submit', LionButtonSubmit);
 customElements.define('lion-input-datepicker', LionInputDatepicker);

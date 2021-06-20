@@ -12,6 +12,7 @@ export class VehicleDetail extends LitElement {
       timeSlots: { type: Array },
       selectedDate: { type: Date },
       selectedTime: { type: String },
+      userObj: { type: Object },
     };
   }
 
@@ -134,6 +135,10 @@ export class VehicleDetail extends LitElement {
     `;
   }
 
+  /**
+   * EventHandler : Google Maps Location
+   * Select the Static Gooogle Maps URLs based on the warehouse
+   */
   _getLocationUrl() {
     switch (this.vehicle.warehouse_id) {
       case '1':
@@ -153,12 +158,19 @@ export class VehicleDetail extends LitElement {
     }
   }
 
+  /**
+   * EventHandler : Appointment Date
+   * Capture the selected date from DatePicker and store
+   */
   _dateChanged(e) {
-    console.log(e.target.modelValue);
     this.selectedDate = new Date(e.target.modelValue);
     this.selectedDate = this.selectedDate.toLocaleDateString('en-CA');
   }
 
+  /**
+   * EventHandler : Book Appointment
+   * Get the Date and Time selected by user and send the request to server to store the slot details
+   */
   _bookTimeSlot() {
     if (
       this.shadowRoot.getElementById('testdrive-date-picker').modelValue ===
@@ -167,10 +179,16 @@ export class VehicleDetail extends LitElement {
     ) {
       alert('Please select both the Date and Time and click on Book');
     } else {
+      const timeSlot = this.shadowRoot.getElementById(
+        'time-slot-lion-select'
+      ).modelValue;
       const newSlot = {
-        dateTime: `${this.selectedDate} ${
-          this.shadowRoot.getElementById('time-slot-lion-select').modelValue
-        }`,
+        user_id: this.userObj.userId,
+        time_text: timeSlot,
+        dateTime: `${this.selectedDate} ${timeSlot.substring(
+          0,
+          2
+        )}:${timeSlot.substring(2, 4)}`,
         car_id: this.vehicle._id,
       };
 
@@ -256,12 +274,7 @@ export class VehicleDetail extends LitElement {
                       <option selected hidden value>Please select</option>
                       ${this.timeSlots.map(
                         timeSlot => html`
-                          <option
-                            value=${`${timeSlot.substring(
-                              0,
-                              2
-                            )}:${timeSlot.substring(2, 4)}`}
-                          >
+                          <option value=${timeSlot}>
                             ${`${timeSlot.substring(0, 2)}:${timeSlot.substring(
                               2,
                               4
