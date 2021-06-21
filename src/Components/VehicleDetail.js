@@ -1,7 +1,8 @@
+/* eslint-disable guard-for-in */
 import { LitElement, html, css } from 'lit-element';
 // import apiKey from '../../assets/GOOGLE_API_KEY.js';   // Uncomment for implementing Google Maps API using api_key
 // import { formatDate } from '@lion/localize';
-import { MinMaxDate } from '@lion/form-core';
+import { MinMaxDate, IsDateDisabled } from '@lion/form-core';
 
 export class VehicleDetail extends LitElement {
   static get properties() {
@@ -10,23 +11,33 @@ export class VehicleDetail extends LitElement {
       location_url: { type: String },
       google_api_key: { type: String },
       timeSlots: { type: Array },
+      updatedTimeSlots: { type: Array },
       selectedDate: { type: Date },
       selectedTime: { type: String },
       userObj: { type: Object },
+      bookedSlotsForFutureDates: { type: Object },
+      slotsAvailable: { type: Array },
+      datesNotAvailable: { type: Array },
+      loadDateTime: { type: Boolean },
+      showTimeSlotDropdown: { type: Boolean },
     };
   }
 
-  // Uncomment for implementing Google Maps API using api_key
-  //   firstUpdated() {
+  firstUpdated() {
+    this.getBookedSlotInformation();
 
-  //     this.google_api_key = apiKey.api_key;
-  //     this.location_url = `https://www.google.com/maps/embed/v1/place?q=${this.vehicle.warehouse_location.lat},+${this.vehicle.warehouse_location.long}&zoom=7&key=${this.google_api_key}`;
-
-  //   }
+    // Uncomment for implementing Google Maps API using api_key
+    //   this.google_api_key = apiKey.api_key;
+    //   this.location_url = `https://www.google.com/maps/embed/v1/place?q=${this.vehicle.warehouse_location.lat},+${this.vehicle.warehouse_location.long}&zoom=7&key=${this.google_api_key}`;
+  }
 
   constructor() {
     super();
+    this.loadDateTime = false;
+    this.showTimeSlotDropdown = false;
     this.selectedDate = new Date().toLocaleDateString('en-CA');
+    this.datesNotAvailable = [];
+    this.updatedTimeSlots = [];
     this.timeSlots = [
       '0800',
       '0830',
@@ -50,89 +61,7 @@ export class VehicleDetail extends LitElement {
   }
 
   static get styles() {
-    return css`
-      .vehicle-detail-dialog {
-        width: 70vw;
-        height: 70vh;
-        background-color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-
-      .vehicle-detail-dialog .vehicle-detail-dialog-header {
-        display: inline-flex;
-        justify-content: flex-end;
-      }
-
-      .vehicle-detail-dialog .vehicle-detail-dialog-body {
-        display: flex;
-        flex-direction: row;
-        height: 100%;
-        justify-content: space-evenly;
-      }
-
-      .vehicle-detail-dialog-body .vehicle-detail-half {
-        width: 50%;
-      }
-
-      .vehicle-detail-dialog-body
-        .vehicle-detail-left
-        .vehicle-image-container
-        img {
-        height: 90%;
-        outline: 1px solid rgba(0, 0, 0, 0.2);
-      }
-
-      .vehicle-detail-dialog-body .vehicle-map-location iframe {
-        height: 80%;
-        width: 80%;
-        outline: 1px solid rgba(0, 0, 0, 0.2);
-      }
-
-      .vehicle-detail-left {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .vehicle-detail-left .vehicle-detail-left-half {
-        height: 50%;
-        text-align: center;
-      }
-
-      .vehicle-detail-right .vehicle-detail-right-half {
-        height: 50%;
-      }
-
-      .vehicle-general-details {
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: space-evenly;
-      }
-
-      .vehicle-general-details span {
-        padding-top: 1%;
-        width: 45%;
-        height: 4vh;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-      }
-
-      #testdrive-date-picker,
-      #time-selection-dropdown-container {
-        width: 60%;
-      }
-
-      #time-selection-dropdown-container #time-selection-dropdown {
-        display: inline-flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-      }
-
-      #time-selection-dropdown-container #time-selection-dropdown lion-select {
-        width: 60%;
-      }
-    `;
+    return css``;
   }
 
   /**
@@ -165,6 +94,7 @@ export class VehicleDetail extends LitElement {
   _dateChanged(e) {
     this.selectedDate = new Date(e.target.modelValue);
     this.selectedDate = this.selectedDate.toLocaleDateString('en-CA');
+    this.showTimeSlotDropdown = false;
   }
 
   /**
@@ -203,6 +133,7 @@ export class VehicleDetail extends LitElement {
         .then(data => {
           console.log('Success:', data);
           alert('Slot Booked Successfully');
+          this._closeDialog();
         })
         .catch(error => {
           console.error('Error:', error);
@@ -213,18 +144,147 @@ export class VehicleDetail extends LitElement {
     }
   }
 
+  /**
+   * EventHandler : Appointment Information
+   * Fetch the appointment information for the selected vehicle and filter the available dates and timeslots
+   */
+  getBookedSlotInformation() {
+    if (
+      this.shadowRoot.getElementById('testdrive-date-picker')?.modelValue === ''
+    ) {
+      alert('Please select the Date to view the available slots');
+    } else {
+      fetch(`http://localhost:5000/getSlots/${this.vehicle._id}`)
+        .then(res => res.json())
+        .then(res => {
+          this.bookedSlotsForFutureDates = res;
+          this.collectDatesAvailable();
+          this.collectTimeSlotsAvailable();
+        });
+    }
+  }
+
   _closeDialog() {
-    // this.selectedDate = new Date().toLocaleDateString('en-CA');
-    this.shadowRoot.getElementById('time-slot-select').selectedIndex = 0;
     const event = new Event('close-overlay', { bubbles: true });
     this.dispatchEvent(event);
+    this.showTimeSlotDropdown = false;
+  }
+
+  /**
+   * Refresh the available dates information which would re-render the datepicker
+   */
+  collectDatesAvailable() {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const date in this.bookedSlotsForFutureDates.appointment_info) {
+      if (
+        this.bookedSlotsForFutureDates.appointment_info[date].length ===
+        this.timeSlots.length
+      ) {
+        this.datesNotAvailable.push(new Date(date).toLocaleDateString('en-CA'));
+      }
+    }
+    this.loadDateTime = true;
+  }
+
+  /**
+   * Refresh the available time slots information for the selected Date and display the timepicker
+   */
+  collectTimeSlotsAvailable() {
+    if (
+      this.bookedSlotsForFutureDates.appointment_info !== undefined &&
+      this.bookedSlotsForFutureDates.appointment_info[this.selectedDate] !==
+        undefined
+    ) {
+      this.updatedTimeSlots = this.timeSlots.filter(
+        time =>
+          this.bookedSlotsForFutureDates.appointment_info[
+            this.selectedDate
+          ].findIndex(tm => tm === time) === -1
+      );
+    } else {
+      this.updatedTimeSlots = this.timeSlots;
+    }
+
+    this.showTimeSlotDropdown = true;
+  }
+
+  /**
+   * Disable the dates which have all the time slots booked and also weekends.
+   */
+  // eslint-disable-next-line class-methods-use-this
+  _disableDates(d) {
+    return (
+      d.getDay() === 6 ||
+      d.getDay() === 0 ||
+      d.toLocaleDateString('en-CA') ===
+        this.datesNotAvailable.find(dt => dt === d.toLocaleDateString('en-CA'))
+    );
   }
 
   render() {
     const placementRightConfig = { popperConfig: { placement: 'right' } };
     const today = new Date();
+    const minDate = new Date(today.setDate(today.getDate() + 1));
     const maxDate = new Date(today.setDate(today.getDate() + 30));
+    let _datePickerTemplate;
+    let _timePickerTemplate;
+    if (this.showTimeSlotDropdown) {
+      _timePickerTemplate = html`
+        <div id="time-selection-dropdown-container">
+          <h4>Select an available time:</h4>
+          <div id="time-selection-dropdown">
+            <lion-select id="time-slot-lion-select" name="book-time-slot">
+              <select id="time-slot-select" slot="input">
+                <option selected hidden value>Please select</option>
+                ${this.updatedTimeSlots.map(
+                  timeSlot => html`
+                    <option value=${timeSlot}>
+                      ${`${timeSlot.substring(0, 2)}:${timeSlot.substring(
+                        2,
+                        4
+                      )}`}
+                    </option>
+                  `
+                )}
+              </select>
+            </lion-select>
+            <lion-button @click=${this._bookTimeSlot}>Book</lion-button>
+          </div>
+        </div>
+      `;
+    }
+
+    if (this.loadDateTime) {
+      _datePickerTemplate = html`
+        <div class="vehicle-detail-testdrive vehicle-detail-right-half">
+          <h3>Book a Slot for Test Drive</h3>
+          <div id="lion-datepicker">
+            <lion-input-datepicker
+              id="testdrive-date-picker"
+              label="Test Drive Date"
+              help-text="You can book an appointment for the next 30days."
+              .config=${placementRightConfig}
+              @model-value-changed=${e => this._dateChanged(e)}
+              .validators=${[
+                new MinMaxDate({
+                  min: minDate,
+                  max: maxDate,
+                }),
+                new IsDateDisabled(d => this._disableDates(d)),
+              ]}
+            >
+            </lion-input-datepicker>
+            <lion-button @click=${this.getBookedSlotInformation}
+              >Select a Slot</lion-button
+            >
+          </div>
+          <!-- Time Picker Template Here -->
+          ${_timePickerTemplate}
+        </div>
+      `;
+    }
     return html`
+      <link rel="stylesheet" href="./src/styles/vehicle-detail.css" />
       <div class="vehicle-detail-dialog">
         <div class="vehicle-detail-dialog-header">
           <button class="close-button" @click=${this._closeDialog}>⨯</button>
@@ -235,9 +295,9 @@ export class VehicleDetail extends LitElement {
               <img src="${this.vehicle.img_url}" alt="Car" />
             </div>
             <div class="vehicle-details vehicle-detail-left-half">
-              <h3>General Details</h3>
+              <h3>${this.vehicle.make} ${this.vehicle.model}</h3>
               <div class="vehicle-general-details">
-                <span><b> ${this.vehicle.make} ${this.vehicle.model}</b></span>
+                <span style="color:Green"> Available </span>
                 <span><b> € ${this.vehicle.price} </b></span>
                 <span>${this.vehicle.year_model} Model</span>
                 <span>Automatic Transmission</span>
@@ -250,44 +310,8 @@ export class VehicleDetail extends LitElement {
             </div>
           </div>
           <div class="vehicle-detail-right vehicle-detail-half">
-            <div class="vehicle-detail-testdrive vehicle-detail-right-half">
-              <h3>Book a Slot for Test Drive</h3>
-              <lion-input-datepicker
-                id="testdrive-date-picker"
-                label="Test Drive Date"
-                help-text="You can book an appointment for the next 30days."
-                .config=${placementRightConfig}
-                @model-value-changed=${e => this._dateChanged(e)}
-                .validators=${[
-                  new MinMaxDate({
-                    min: new Date(),
-                    max: maxDate,
-                  }),
-                ]}
-              >
-              </lion-input-datepicker>
-              <div id="time-selection-dropdown-container">
-                <h4>Select an available time:</h4>
-                <div id="time-selection-dropdown">
-                  <lion-select id="time-slot-lion-select" name="book-time-slot">
-                    <select id="time-slot-select" slot="input">
-                      <option selected hidden value>Please select</option>
-                      ${this.timeSlots.map(
-                        timeSlot => html`
-                          <option value=${timeSlot}>
-                            ${`${timeSlot.substring(0, 2)}:${timeSlot.substring(
-                              2,
-                              4
-                            )}`}
-                          </option>
-                        `
-                      )}
-                    </select>
-                  </lion-select>
-                  <lion-button @click=${this._bookTimeSlot}>Book</lion-button>
-                </div>
-              </div>
-            </div>
+            <!-- Datepicker here -->
+            ${_datePickerTemplate}
             <div class="vehicle-map-location vehicle-detail-right-half">
               <iframe
                 width="100%"
@@ -301,7 +325,6 @@ export class VehicleDetail extends LitElement {
             </div>
           </div>
         </div>
-        <!-- <div class="vehicle-detail-dialog-footer"></div> -->
       </div>
     `;
   }

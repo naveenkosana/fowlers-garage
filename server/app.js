@@ -83,10 +83,34 @@ app.get('/getCarsDataFromWarehouse/:id', (req, res) => {
 app.get('/getSlots/:id', (req, res) => {
   const testDriveSlots = fs.readFileSync(testDriveSlotsFileUrl);
   const testDriveSlotsData = JSON.parse(testDriveSlots);
-
-  res.json(
-    testDriveSlotsData.find(car => car.car_id === parseInt(req.params.id, 10))
+  const carSlotData = testDriveSlotsData.find(
+    car => car.car_id === parseInt(req.params.id, 10)
   );
+
+  let today = new Date();
+  today = today.toLocaleDateString('en-CA');
+
+  if (carSlotData === undefined) {
+    return res.json('No Slot Info Found');
+  }
+
+  const carSlotObj = {
+    car_id: carSlotData.car_id,
+    appointment_info: {},
+  };
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const date in carSlotData.appointment_info) {
+    if (date >= today) {
+      carSlotObj.appointment_info[date] = [];
+      carSlotData.appointment_info[date].forEach(d => {
+        if (d.status === 'booked')
+          carSlotObj.appointment_info[date].push(d.time_text);
+      });
+    }
+  }
+
+  return res.json(carSlotObj);
 });
 
 /**
@@ -119,15 +143,17 @@ app.post('/createSlot', jsonParser, (req, res) => {
     // add car and booked slot detail
     testDriveSlotsData.push({
       car_id: parseInt(newSlotFromClient.car_id, 10),
-      [newDate]: [newSlot],
+      appointment_info: {
+        [newDate]: [newSlot],
+      },
     });
   } else {
     // add new slot details to existing car object
-    if (testDriveSlotsData[carIndex][newDate] === undefined) {
-      testDriveSlotsData[carIndex][newDate] = [];
+    if (testDriveSlotsData[carIndex].appointment_info[newDate] === undefined) {
+      testDriveSlotsData[carIndex].appointment_info[newDate] = [];
     }
 
-    testDriveSlotsData[carIndex][newDate].push(newSlot);
+    testDriveSlotsData[carIndex].appointment_info[newDate].push(newSlot);
   }
 
   const rawJson = JSON.stringify(testDriveSlotsData);
