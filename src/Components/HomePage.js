@@ -9,11 +9,13 @@ export class HomePage extends LitElement {
       pageCount: { type: Number },
       currentPage: { type: Number },
       userObj: { type: Object },
+      showLoader: { type: Object },
     };
   }
 
   constructor() {
     super();
+    this.showLoader = true;
     this.carsData = [];
     this.paginatedCarsData = [];
     this.pageCount = 1;
@@ -28,6 +30,13 @@ export class HomePage extends LitElement {
         this.carsData = res;
         this.carsData.sort((a, b) => a.date_added.localeCompare(b.date_added));
         this.paginateCarsList();
+        this.showLoader = false;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert(
+          "We're currently experiencing some issues. Please try again later"
+        );
       });
   }
 
@@ -96,6 +105,9 @@ export class HomePage extends LitElement {
 
   render() {
     const { paginatedCarsData } = this;
+    if (this.showLoader) {
+      return html` <h1>Loading...</h1> `;
+    }
     return html`
       <link rel="stylesheet" href="./src/styles/home-page-styles.css" />
       <div class="cars-data-container">

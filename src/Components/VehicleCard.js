@@ -12,8 +12,8 @@ export class VehicleCard extends LitElement {
     return css`
       .car-card img {
         width: 100%;
-        border-top-right-radius: 5%;
-        border-top-left-radius: 5%;
+        border-top-right-radius: 6%;
+        border-top-left-radius: 6%;
       }
 
       .car-card .card-container {

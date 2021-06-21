@@ -14,13 +14,48 @@ export class LoginPage extends LitElement {
     return css`
       .website-title {
         height: 20vh;
+        width: 100vw;
+        display: flex;
+        background-color: rgb(200, 216, 228);
+        align-items: center;
+        justify-content: center;
+      }
+
+      .website-title h1 {
+        font-size: 4em;
+        color: #2b6777;
       }
       .container {
         display: flex;
         justify-content: start;
-        align-items: center;
+        align-items: start;
         flex-direction: column;
         height: 60vh;
+        width: 20vw;
+        margin: 0px auto;
+      }
+      .container label {
+        font-size: 1.5em;
+        height: 9vh;
+      }
+
+      .container input {
+        height: 4vh;
+        font-size: 1em;
+        width: 100%;
+      }
+
+      .container button {
+        margin: 0 auto;
+        margin-top: 15%;
+        background-color: #c8d8e4;
+        color: #2b6777;
+        font-weight: bold;
+        border-radius: 11%;
+        width: 58%;
+        cursor: pointer;
+        height: 5vh;
+        font-size: 1em;
       }
     `;
   }
@@ -57,6 +92,12 @@ export class LoginPage extends LitElement {
           this.userObj = res;
           this._fireShowHomePage();
         }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert(
+          "We're currently experiencing some issues. Please try again later"
+        );
       });
   }
 
@@ -103,9 +144,7 @@ export class LoginPage extends LitElement {
           required
         />
 
-        <lion-button type="submit" @click=${this._checkLogin}
-          >Login</lion-button
-        >
+        <button type="submit" @click=${this._checkLogin}>Login</button>
       </div>
     `;
   }

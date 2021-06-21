@@ -12,6 +12,24 @@ export class FilterPanel extends LitElement {
       #filter-panel-sort-dropdown lion-select-invoker {
         border: 1px solid black;
         cursor: pointer;
+        color: #2b6777;
+        background-color: #c8d8e4;
+      }
+
+      #filter-panel-sort-dropdown lion-option[checked],
+      #filter-panel-sort-dropdown lion-option[active] {
+        background-color: #2b6777;
+        color: #c8d8e4;
+      }
+
+      #filter-panel-sort-dropdown lion-option:hover {
+        background-color: #ffffff;
+        color: #2b6777;
+      }
+
+      #filter-panel-sort-dropdown lion-option {
+        background-color: #c8d8e4;
+        color: #2b6777;
       }
     `;
   }

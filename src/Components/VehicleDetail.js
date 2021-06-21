@@ -313,9 +313,9 @@ export class VehicleDetail extends LitElement {
             <!-- Datepicker here -->
             ${_datePickerTemplate}
             <div class="vehicle-map-location vehicle-detail-right-half">
+              <h4>Warehouse Location :</h4>
               <iframe
                 width="100%"
-                height="100%"
                 title="vehicle-location"
                 style="border:0"
                 loading="lazy"

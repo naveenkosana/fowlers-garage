@@ -16,12 +16,14 @@ export class FowlersGarage extends LitElement {
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        //font-size: calc(10px + 1vmin);
-        color: #1a2b42;
+        /*font-size: calc(10px + 1vmin);*/
+        /*color: #1a2b42;*/
+        color: #ffffff;
         max-width: 100vw;
         margin: 0 auto;
         text-align: center;
-        background-color: var(--fowlers-garage-background-color);
+        /* background-color: var(--fowlers-garage-background-color); */
+        background-color: #2b6777;
       }
 
       main .title-navbar {
@@ -29,11 +31,14 @@ export class FowlersGarage extends LitElement {
         width: 100%;
         position: fixed;
         height: 7vh;
+        z-index:2;
+        background-color:#2b6777;
       }
 
       main .home-body {
         position: relative;
         top: 7vh;
+        background-color:#ffffff;
       }
 
       .logo > svg {
@@ -58,6 +63,7 @@ export class FowlersGarage extends LitElement {
       }
 
       .app-footer a {
+        color:#ffffff
         margin-left: 5px;
       }
     `;
@@ -75,39 +81,30 @@ export class FowlersGarage extends LitElement {
     this.userObj = e.detail.userObj;
   }
 
+  _signout() {
+    this.showHomePage = false;
+  }
+
   render() {
     if (this.showHomePage) {
       return html`
         <main>
           <div class="title-navbar">
-            <title-navbar .userObj=${this.userObj}> </title-navbar>
+            <title-navbar
+              @signout-event=${this._signout}
+              .userObj=${this.userObj}
+            >
+            </title-navbar>
           </div>
           <div class="home-body">
             <home-page .userObj=${this.userObj}> </home-page>
           </div>
         </main>
-
-        <p class="app-footer">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://github.com/naveenkosana"
-            >Naveen Kosana</a
-          >
-        </p>
       `;
     }
 
     return html`
       <login-page @login-success="${this._handleHomePageView}"></login-page>
-      <p class="app-footer">
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/naveenkosana"
-          >Naveen Kosana</a
-        >
-      </p>
     `;
   }
 }
