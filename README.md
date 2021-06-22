@@ -1,6 +1,6 @@
 # fowlers-garage
 
-#### Intro to the Users:
+### Intro to the Users:
 
 Welcome to Fowler's Garage. A one stop shop to explore second hand cars. We aim to give the cars one more chance to rule the roads! Using this application, you can choose cars ranging from Toyota to Porsche all under one roof. If you like a car and want to do a test drive, you can very well do that. We provide an option to book appointment from the available time slots on any selected date within next 30days. Please mind that you can only choose cars which are available and licensed for a test drive. Why wait.. Go ahead and start exploring the beasts!!
 
@@ -54,13 +54,20 @@ If you customize the configuration a lot, you can consider moving them to indivi
 
 [![Built with open-wc recommendations](https://img.shields.io/badge/built%20with-open--wc-blue.svg)](https://github.com/open-wc)
 
-Lion Web Components (https://lion-web.netlify.app/components/)
-lit-html(https://lit-html.polymer-project.org/) and lit-element(https://lit-element.polymer-project.org/)
-npm(http://npmjs.com/)
-Open Web Components (https://github.com/open-wc)
-ESLint(https://eslint.org/)
-prettier (https://prettier.io/)
-ES modules (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import)
+[Lion Web Components](https://lion-web.netlify.app/components/)
+
+[lit-html](https://lit-html.polymer-project.org/) and [lit-element](https://lit-element.polymer-project.org/)
+
+[npm](http://npmjs.com/)
+
+[Open Web Components](https://github.com/open-wc)
+
+[ESLint](https://eslint.org/)
+
+[prettier](https://prettier.io/)
+
+[ES modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import)
+
 
 ###Developed by
 Naveen Kosana
