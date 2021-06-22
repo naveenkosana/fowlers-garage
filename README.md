@@ -1,4 +1,4 @@
-# fowlers-garage
+# Fowlers Garage
 
 ### Intro to the Users:
 
@@ -10,10 +10,10 @@ To get started:
 
 1. Clone this repository to your local or download the repository and then extract it.
 2. Make sure you have NodeJS (npm) installed on your system.
-3. Run the command `npm install` in the repository directory (fowlers-garage)
+3. Run the command `npm install` in the repository directory (fowlers-garage-main)
 4. Navigate to the folder named "server" inside the project and run the command `npm install` to install server side code (NodeJS) dependencies.
 5. Navigate to the server folder, and in your terminal run the command `node app.js` to run the express server which serves as the backend for this application
-6. Go one folder up and inside the fowlers-garage folder, run `npm start` command for starting the client side application. Navigate to `http://localhost:8000/`. The app will automatically reload if you change any of the source files.
+6. Go one folder up and inside the fowlers-garage-main folder, run `npm start` command for starting the client side application. Navigate to `http://localhost:8000/`. The app will automatically reload if you change any of the source files.
 7. The application features a static login page and you can enter the following username/password combinations to Login:
    `user1/password`
    `user2/password`
